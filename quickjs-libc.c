@@ -1081,6 +1081,27 @@ static JSValue js_std_parseExtJSON(JSContext *ctx, JSValueConst this_val,
     return obj;
 }
 
+static JSValue js_std_encode(JSContext *ctx, JSValueConst this_val,
+    int argc, JSValueConst *argv)
+{
+    size_t buf_len;
+    uint8_t *buf = JS_GetArrayBuffer(ctx, &buf_len, argv[0]);
+    if (!buf)
+        return JS_EXCEPTION;
+
+    return JS_NewStringLen(ctx, (char *)buf, buf_len);
+}
+
+static JSValue js_std_decode(JSContext *ctx, JSValueConst this_val,
+    int argc, JSValueConst *argv)
+{
+    size_t str_len;
+    const char *str = JS_ToCStringLen(ctx, &str_len, argv[0]);
+    if (!str)
+        return JS_EXCEPTION;
+    return JS_NewArrayBufferCopy(ctx, (uint8_t *)str, str_len);
+}
+
 static JSValue js_new_std_file(JSContext *ctx, FILE *f,
                                BOOL close_in_finalizer,
                                BOOL is_popen)
@@ -1762,6 +1783,9 @@ static const JSCFunctionListEntry js_std_funcs[] = {
     JS_CFUNC_DEF("loadFile", 1, js_std_loadFile ),
     JS_CFUNC_DEF("strerror", 1, js_std_strerror ),
     JS_CFUNC_DEF("parseExtJSON", 1, js_std_parseExtJSON ),
+
+    JS_CFUNC_DEF("encode", 1, js_std_encode ),
+    JS_CFUNC_DEF("decode", 1, js_std_decode ),
 
     /* FILE I/O */
     JS_CFUNC_DEF("open", 2, js_std_open ),

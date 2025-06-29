@@ -276,4 +276,6 @@ declare module "std" {
 	 * - octal (0o prefix) and hexadecimal (0x prefix) numbers
 	 */
 	export function parseExtJSON(str: string): any;
+	export function encode(buf: ArrayBuffer): string;
+	export function decode(str: string): ArrayBuffer;
 }
